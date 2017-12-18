@@ -14,4 +14,7 @@ NetworKINPred_db
 \description{
 A data table containing all precalculated NetworKIN predictions performed on known ensembl sequences.
 }
+\references{
+Horn et al., KinomeXplorer: an integrated platform for kinome biology studies. Nature Methods 2014 Jun;11(6):603–4.
+}
 \keyword{datasets}

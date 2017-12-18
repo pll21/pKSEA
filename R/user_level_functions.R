@@ -1,4 +1,72 @@
 
+#' Filtering data to matched predictions
+#'
+#'
+#' This function reformats summary statistic phosphoproteomicdata to single observations for each phosphorylation site,
+#' duplicating other fields for multiple sites on the same peptide. Next, it attempts
+#' to find predictions for each phosphorylation site in the provided database. It returns
+#' observations (phosphorylation sites) for which a prediction is detected in the database,
+#' matching based on HUGO gene name and phosphorylated residue.
+#'
+#' @param datafull Statistical summary data with an entry for each phosphopeptide. Required columns:
+#' GN = gene name identifier that will be matched with prediction database, Peptide = unique peptide identifier
+#' (for example, sequence with modifications), Phosphosites = comma-separated phosphorylation sites (eg. "T102,S105"),
+#' pval= pairwise test p-value, fc= mean fold change, t= pairwise test t-statistic. pval and fc are used for results
+#' reporting only, all others are important for database searching, calculation, and permutation testing.
+#'
+#' @param predictionDB Input database whose prediction scores will be used for calculations. Required columns:
+#' substrate_name= name of substrate corresponding to GN in datafull, kinase_id = identifiers for kinase predictors,
+#' position= phosphorylated residue number, score = numeric score for strength of prediction.
+#'
+#' @export
+#'
+
+##Input file annotated with Phosphosites, pval, fc, t (t-score),
+## GN (HUGO Gene Name), and Peptide (sequence)
+
+get_matched_data <- function(datafull, predictionDB){
+
+  #Create separate entry for each phosphosite
+  multiplePhos <- datafull[grep(",",datafull$Phosphosites),]
+  residues <- as.character(multiplePhos$Phosphosites)
+  residues <- as.matrix(residues, ncol = 1)
+  split <- strsplit(residues, split = ",")
+  numsites <- sapply(split, length)
+
+  singlePhos = data.frame(GN = rep(multiplePhos$GN, numsites))
+  singlePhos$GN <- rep(multiplePhos$GN, numsites)
+  singlePhos$Peptide <- rep(multiplePhos$Peptide, numsites)
+  singlePhos$Phosphosites <- unlist(split)
+  singlePhos$pval <- rep(multiplePhos$pval, numsites)
+  singlePhos$fc <- rep(multiplePhos$fc, numsites)
+  # singlePhos$zscore <- rep(multiplePhos$zscore, numsites) #if applicable
+  singlePhos$t <- rep(multiplePhos$t, numsites) #if applicable
+
+  # New dataframe with an observation for each phosphosite on each peptide
+  # Remove all entries with multiple phosphosites
+  newfull <- datafull[!grepl(",", datafull$Phosphosites),]
+  newfull <- newfull[,c("Peptide", "pval", "GN", "fc",
+                        "t",
+                        # "zscore",
+                        "Phosphosites")]
+
+  # Rebind all native single phosphosite entries with converted multiple phosphosite entries
+  newfull <- rbind(newfull, singlePhos)
+
+  #split number, residue, to facilitate matching
+  newfull$pos <- as.numeric(gsub("[A-Z]", "", newfull$Phosphosites))
+  newfull$res <- gsub("[0-9]", "", newfull$Phosphosites)
+
+  #merge get pertinent rows
+  newfull_filt <- merge(newfull, predictionDB, by.x = c("GN", "pos"), by.y= c("substrate_name", "position"))
+
+  newfull_filt$siteid <- paste(newfull_filt$GN, newfull_filt$Phosphosites, sep = "_")
+  # newfull_filt$siteid <- factor(newfull_filt$siteid)
+  # newfull_filt$Phosphosites <- NULL
+  return(newfull_filt)
+}
+
+
 #' Runs pKSEA analysis on a dataset result from get_matched_data.
 #'
 #' Calculates score contributions from summary statistics (tscore) and prediction scores, and sums contribution scores
@@ -103,64 +171,6 @@ compare <- function(matched_data,
   return(results)
 }
 
-#' Output writing of pKSEA compare() results
-#'
-#' Output only:
-#' uses results from compare(), outputs up to three files labeled full.csv and no_ksea.csv and ksea_only.csv
-#' appended to an output name (KSEA-filtered results only if KSEA database was provided to compare()).
-#' @importFrom utils write.csv
-#' @param full_ksea.results results from compare() including full and optional KSEA excluded and exclusive results
-#' @param outputpath parent directory for output
-#' @param outputname file name of output
-#' @param singlefolder if desired, name of output folder within parent directory. Default is separate folders
-#' for each compare() run
-#'
-#' @keywords internal
-#' @export
-#'
-#'
-
-results_write <- function(full_ksea.results, outputpath, outputname, singlefolder = NULL){
-  if(!is.null(singlefolder)){
-    outfolder <- file.path(outputpath, singlefolder)
-    ifelse(!dir.exists(outfolder), dir.create(outfolder), F)
-    write.csv(full_ksea.results$full, file = file.path(outfolder, paste(outputname, "full.csv")),
-              quote = F, row.names = T)
-    if(any(names(full_ksea.results) == "noksea")){
-      write.csv(full_ksea.results$noksea, file = file.path(outfolder, paste(outputname, "no_ksea.csv")),
-                quote = F, row.names = T)
-      write.csv(full_ksea.results$kseaonly, file = file.path(outfolder, paste(outputname, "ksea_only.csv")),
-                quote = F, row.names = T)
-    }
-  } else {
-    runlabel <- mk_runlabel(parentdir = outputpath, customsuffix = outputname)
-    write.csv(full_ksea.results$full, file = file.path(outputpath, runlabel, paste(outputname, "full.csv")),
-              quote = F, row.names = T)
-    if(any(names(full_ksea.results) == "noksea")){
-      write.csv(full_ksea.results$noksea, file = file.path(outputpath, runlabel, paste(outputname, "noksea.csv")),
-                quote = F, row.names = T)
-      write.csv(full_ksea.results$kseaonly, file = file.path(outfolder, paste(outputname, "ksea only.csv")),
-                quote = F, row.names = T)
-    }
-  }
-}
-
-#' mk_runlabel()
-#'
-#' Utility function for generating new identifiers for each run, labeled by time run was initiated and
-#' custom suffix
-#'
-#' @param parentdir parent directory
-#' @param customsuffix additional suffix to run identifier
-#' @keywords internal
-#' @export
-#'
-
-mk_runlabel <- function(parentdir= getwd(), customsuffix){
-  runlabel <- paste(format(Sys.time(), "%F %H-%M"), customsuffix)
-  ifelse(!dir.exists(file.path(parentdir, runlabel)), dir.create(file.path(parentdir, runlabel)), F)
-  return(runlabel)
-}
 
 #' Running pKSEA::compare() on multiple files
 #'

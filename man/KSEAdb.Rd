@@ -4,7 +4,7 @@
 \name{KSEAdb}
 \alias{KSEAdb}
 \title{KSEAdb}
-\format{An object of class \code{data.frame} with 240749 rows and 14 columns.}
+\format{An object of class \code{data.frame} with 240749 rows and 6 columns.}
 \source{
 \url{https://www.phosphosite.org/staticDownloads.action}
 }
@@ -13,5 +13,8 @@ KSEAdb
 }
 \description{
 A data table containing all known kinase-substrate links known in PhosphoSitePlus.
+}
+\references{
+Hornbeck PV, Zhang B, Murray B, Kornhauser JM, Latham V, Skrzypek E PhosphoSitePlus, 2014: mutations, PTMs and recalibrations. Nucleic Acids Res. 2015 43:D512-20.
 }
 \keyword{datasets}

@@ -147,3 +147,62 @@ KSEAfilter <- function(matched_data, kseadb, reverse= F){
   }
   return(matched_filtered)
 }
+
+#' Output writing of pKSEA compare() results
+#'
+#' Output only:
+#' uses results from compare(), outputs up to three files labeled full.csv and no_ksea.csv and ksea_only.csv
+#' appended to an output name (KSEA-filtered results only if KSEA database was provided to compare()).
+#' @importFrom utils write.csv
+#' @param full_ksea.results results from compare() including full and optional KSEA excluded and exclusive results
+#' @param outputpath parent directory for output
+#' @param outputname file name of output
+#' @param singlefolder if desired, name of output folder within parent directory. Default is separate folders
+#' for each compare() run
+#'
+#' @keywords internal
+#' @export
+#'
+#'
+
+results_write <- function(full_ksea.results, outputpath, outputname, singlefolder = NULL){
+  if(!is.null(singlefolder)){
+    outfolder <- file.path(outputpath, singlefolder)
+    ifelse(!dir.exists(outfolder), dir.create(outfolder), F)
+    write.csv(full_ksea.results$full, file = file.path(outfolder, paste(outputname, "full.csv")),
+              quote = F, row.names = T)
+    if(any(names(full_ksea.results) == "noksea")){
+      write.csv(full_ksea.results$noksea, file = file.path(outfolder, paste(outputname, "no_ksea.csv")),
+                quote = F, row.names = T)
+      write.csv(full_ksea.results$kseaonly, file = file.path(outfolder, paste(outputname, "ksea_only.csv")),
+                quote = F, row.names = T)
+    }
+  } else {
+    runlabel <- mk_runlabel(parentdir = outputpath, customsuffix = outputname)
+    write.csv(full_ksea.results$full, file = file.path(outputpath, runlabel, paste(outputname, "full.csv")),
+              quote = F, row.names = T)
+    if(any(names(full_ksea.results) == "noksea")){
+      write.csv(full_ksea.results$noksea, file = file.path(outputpath, runlabel, paste(outputname, "noksea.csv")),
+                quote = F, row.names = T)
+      write.csv(full_ksea.results$kseaonly, file = file.path(outfolder, paste(outputname, "ksea only.csv")),
+                quote = F, row.names = T)
+    }
+  }
+}
+
+#' mk_runlabel()
+#'
+#' Utility function for generating new identifiers for each run, labeled by time run was initiated and
+#' custom suffix
+#'
+#' @param parentdir parent directory
+#' @param customsuffix additional suffix to run identifier
+#' @keywords internal
+#' @export
+#'
+
+mk_runlabel <- function(parentdir= getwd(), customsuffix){
+  runlabel <- paste(format(Sys.time(), "%F %H-%M"), customsuffix)
+  ifelse(!dir.exists(file.path(parentdir, runlabel)), dir.create(file.path(parentdir, runlabel)), F)
+  return(runlabel)
+}
