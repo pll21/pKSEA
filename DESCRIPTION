@@ -3,9 +3,10 @@ Type: Package
 Title: Prediction-Based Kinase-Substrate Enrichment Analysis
 Version: 0.0.1
 Authors@R: person("Peter", "Liao", email = "pll21@case.edu", role = c("aut", "cre"))
-Description: This package uses summary statistics calculated from phosphoproteomic data at the peptide level to infer changes in kinase activity across conditions. pKSEA uses kinase-substrate prediction scores to weight observed changes in phosphopeptide abundance to calculate a phosphopeptide-level contribution score, then sums up these contribution scores by kinase to obtain a phosphoproteome-level kinase activity change score (KAC score). pKSEA then assesses the significance of changes in predicted substrate abundances for each kinase using permutation testing. This results in a permutation score (pKSEA significance score) reflecting the likelihood of a similarly high or low KAC from random chance, which can then be interpreted in an analogous manner to an empirically calculated p-value. pKSEA contains default databases of kinase-substrate predictions from NetworKIN (NetworKINPred_db) and of known kinase-substrate links from PhosphoSitePlus (KSEAdb).
+Description: A tool for inferring kinase activity changes from phosphoproteomics data. pKSEA uses kinase-substrate prediction scores to weight observed changes in phosphopeptide abundance to calculate a phosphopeptide-level contribution score, then sums up these contribution scores by kinase to obtain a phosphoproteome-level kinase activity change score (KAC score). pKSEA then assesses the significance of changes in predicted substrate abundances for each kinase using permutation testing. This results in a permutation score (pKSEA significance score) reflecting the likelihood of a similarly high or low KAC from random chance, which can then be interpreted in an analogous manner to an empirically calculated p-value. pKSEA contains default databases of kinase-substrate predictions from NetworKIN (NetworKINPred_db) and of known kinase-substrate links from PhosphoSitePlus (KSEAdb).
 Depends: R (>= 3.4.1)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Maintainer: Peter Liao <pll21@case.edu>
