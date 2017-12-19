@@ -14,7 +14,7 @@
 #' matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
 #'
 #' #Calculate contributions
-#' calc_contribution(matched_data_ex)
+#' calc_ex <- calc_contribution(matched_data_ex)
 
 calc_contribution <- function(matched_data){
   # matched_data$contribution <- matched_data$zscore * log(matched_data$score)
