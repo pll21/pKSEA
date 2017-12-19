@@ -1,3 +1,7 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+*Reformatted the LICENSE file to be in plain ASCII text.
 
 ## Test environments
 *local Windows 8.1 Enterprise, R 3.4.2
