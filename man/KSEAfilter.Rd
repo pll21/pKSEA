@@ -12,6 +12,9 @@ KSEAfilter(matched_data, kseadb, reverse = F)
 \item{kseadb}{KSEA database containing substrate gene name "SUB_GENE" and phosphorylated residue
 "SUB_MOD_RSD" in standard form (ie. T302).}
 }
+\value{
+Result of get_matched_data function with features existing in KSEA database removed.
+}
 \description{
 Filter matched data to remove positive IDs from KSEA
 }

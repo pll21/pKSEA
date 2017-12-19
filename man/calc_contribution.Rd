@@ -23,6 +23,6 @@ summarydata_ex <- read.csv(system.file("extdata", "example_data1.csv", package="
 matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
 
 #Calculate contributions
-calc_contribution(matched_data_ex)
+calc_ex <- calc_contribution(matched_data_ex)
 }
 \keyword{internal}
