@@ -9,7 +9,24 @@ getscores(matched_data)
 \arguments{
 \item{matched_data}{Input with calculated contributions}
 }
+\value{
+A dataframe with each kinase as a row and raw kinase activity change score (KAC) calculated
+}
 \description{
 Sum score contributions for each kinase across all phosphopeptides
+}
+\examples{
+#Read in example summary statistics dataset from csv
+summarydata_ex <- read.csv(system.file("extdata", "example_data1.csv", package="pKSEA"))
+
+#Get matched data using predictions from NetworKIN
+matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
+
+#Calculate contributions
+calc_ex <- calc_contribution(matched_data_ex)
+
+#Calculate kinase activity change scores
+kac_ex <- getscores(calc_ex)
+
 }
 \keyword{internal}

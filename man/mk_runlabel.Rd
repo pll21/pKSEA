@@ -4,7 +4,7 @@
 \alias{mk_runlabel}
 \title{mk_runlabel()}
 \usage{
-mk_runlabel(parentdir = getwd(), customsuffix)
+mk_runlabel(parentdir = tempdir(), customsuffix)
 }
 \arguments{
 \item{parentdir}{parent directory}

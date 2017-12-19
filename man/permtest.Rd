@@ -11,8 +11,24 @@ permtest(matched_data, perms = 1000, seed = 1)
 
 \item{perms}{Number of permutations to run, default = 1000}
 }
+\value{
+dataframe with kinases as rows, each column as KAC scores calculated from one permutation
+}
 \description{
 Returns a table that has permuted the relationship between phosphopeptides and summary statistics
 (ie. fold change, t-score)
+}
+\examples{
+#Read in example summary statistics dataset from csv
+summarydata_ex <- read.csv(system.file("extdata", "example_data1.csv", package="pKSEA"))
+
+#Get matched data using predictions from NetworKIN
+matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
+
+#Calculate contributions
+calc_ex <- calc_contribution(matched_data_ex)
+
+#Perform 5 permutations
+perm_ex <- permtest(calc_ex, perms= 5, seed= 123)
 }
 \keyword{internal}

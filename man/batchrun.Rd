@@ -23,11 +23,19 @@ position= phosphorylated residue number, score = numeric score for strength of p
 \item{results_folder}{if desired, a single output folder. Else each run performed on each file
 will have a separate output folder identified by run initiation time.}
 
-\item{...}{parameters to be passed on to downstream functions, including(default):
+\item{...}{parameters to be passed on to downstream functions, including(default): outputpath (tempdir())
 n_permutations (1000), seed (123), kseadb (NULL), kin_ens_table (NULL).
 See \code{\link{run_on_matched}}, \code{\link{compare}} for details.}
 }
 \description{
 For running compare() on multiple CSV data files in the same directory and for writing results to a folder in the
-designated data directory. Can receive various arguments to be passed on to downstream functions.
+designated data directory. Can receive various arguments to be passed on to downstream functions. Writes to tempdir()
+unless \code{outputpath} variable is specified by user (argument passed on to \code{\link{results_write}}).
+}
+\examples{
+#point to data directory that contains summary .csv files
+datapath <- system.file("extdata", package = "pKSEA")
+
+#run batchrun function to analyze all files in that folder, with options
+batchrun(datapath, predictionDB=NetworKINPred_db, kseadb = KSEAdb, n_permutations = 5)
 }

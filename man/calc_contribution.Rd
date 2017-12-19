@@ -9,7 +9,20 @@ calc_contribution(matched_data)
 \arguments{
 \item{matched_data}{Input}
 }
+\value{
+\code{matched_data} with contribution scores calculated
+}
 \description{
 Calculate score contributions by phosphorylation site
+}
+\examples{
+#Read in example summary statistics dataset from csv
+summarydata_ex <- read.csv(system.file("extdata", "example_data1.csv", package="pKSEA"))
+
+#Get matched data using predictions from NetworKIN
+matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
+
+#Calculate contributions
+calc_contribution(matched_data_ex)
 }
 \keyword{internal}

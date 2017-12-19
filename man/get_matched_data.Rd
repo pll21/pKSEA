@@ -24,3 +24,10 @@ to find predictions for each phosphorylation site in the provided database. It r
 observations (phosphorylation sites) for which a prediction is detected in the database,
 matching based on HUGO gene name and phosphorylated residue.
 }
+\examples{
+#Read in example summary statistics dataset from csv
+summarydata_ex <- read.csv(system.file("extdata", "example_data1.csv", package="pKSEA"))
+
+#Get matched data using predictions from NetworKIN
+matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
+}

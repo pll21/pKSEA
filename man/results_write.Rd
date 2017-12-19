@@ -4,21 +4,37 @@
 \alias{results_write}
 \title{Output writing of pKSEA compare() results}
 \usage{
-results_write(full_ksea.results, outputpath, outputname, singlefolder = NULL)
+results_write(full_ksea.results, outputpath = tempdir(), outputname,
+  singlefolder = NULL)
 }
 \arguments{
 \item{full_ksea.results}{results from compare() including full and optional KSEA excluded and exclusive results}
 
-\item{outputpath}{parent directory for output}
+\item{outputpath}{parent directory for output, defaults to tempdir() unless defined by user}
 
 \item{outputname}{file name of output}
 
-\item{singlefolder}{if desired, name of output folder within parent directory. Default is separate folders
+\item{singlefolder}{if desired, name of output folder within output directory. Default is separate folders
 for each compare() run}
 }
 \description{
 Output only:
 uses results from compare(), outputs up to three files labeled full.csv and no_ksea.csv and ksea_only.csv
 appended to an output name (KSEA-filtered results only if KSEA database was provided to compare()).
+}
+\examples{
+#Read in example summary statistics dataset from csv
+summarydata_ex <- read.csv(system.file("extdata", "example_data1.csv", package="pKSEA"))
+
+#Get matched data using predictions from NetworKIN
+matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
+
+#Perform single run of pKSEA analysis
+single_run_results_ex <- run_on_matched(matched_data_ex, n_permutations = 10)
+
+#Export results to R session temporary directory
+\dontrun{
+results_write(single_run_results_ex, outputpath= tempdir(), outputname= "example")
+}
 }
 \keyword{internal}

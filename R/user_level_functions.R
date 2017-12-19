@@ -19,7 +19,12 @@
 #' position= phosphorylated residue number, score = numeric score for strength of prediction.
 #'
 #' @export
+#' @examples
+#' #Read in example summary statistics dataset from csv
+#' summarydata_ex <- read.csv(system.file("extdata", "example_data1.csv", package="pKSEA"))
 #'
+#' #Get matched data using predictions from NetworKIN
+#' matched_data_ex <- get_matched_data(summarydata_ex, NetworKINPred_db)
 
 ##Input file annotated with Phosphosites, pval, fc, t (t-score),
 ## GN (HUGO Gene Name), and Peptide (sequence)
@@ -175,10 +180,10 @@ compare <- function(matched_data,
 #' Running pKSEA::compare() on multiple files
 #'
 #' For running compare() on multiple CSV data files in the same directory and for writing results to a folder in the
-#' designated data directory. Can receive various arguments to be passed on to downstream functions.
+#' designated data directory. Can receive various arguments to be passed on to downstream functions. Writes to tempdir()
+#' unless \code{outputpath} variable is specified by user (argument passed on to \code{\link{results_write}}).
 #'
 #' @importFrom utils read.csv
-#' @importFrom utils write.csv
 #' @usage batchrun(summaryfiledir, commonfilestring = ".csv",
 #' predictionDB, results_folder = NULL, ...)
 #' @param summaryfiledir Directory containing summary statistic CSV files. Required data file columns:
@@ -192,12 +197,21 @@ compare <- function(matched_data,
 #' position= phosphorylated residue number, score = numeric score for strength of prediction.
 #' @param results_folder if desired, a single output folder. Else each run performed on each file
 #' will have a separate output folder identified by run initiation time.
-#' @param ... parameters to be passed on to downstream functions, including(default):
+#' @param ... parameters to be passed on to downstream functions, including(default): outputpath (tempdir())
 #' n_permutations (1000), seed (123), kseadb (NULL), kin_ens_table (NULL).
 #' See \code{\link{run_on_matched}}, \code{\link{compare}} for details.
 #' @inheritParams run_on_matched
 #'
 #' @export
+#' @examples
+#' #point to data directory that contains summary .csv files
+#' datapath <- system.file("extdata", package = "pKSEA")
+#'
+#' #run batchrun function to analyze all files in that folder, with options
+#' batchrun(datapath, predictionDB=NetworKINPred_db, kseadb = KSEAdb, n_permutations = 5)
+
+
+
 
 
 #batch run on all files in summaryfiledir with a common file string label
@@ -209,15 +223,14 @@ batchrun <- function(summaryfiledir, commonfilestring = ".csv", predictionDB, re
   for (i in 1:length(sum_manifest)){
 
     summary_data <- read.csv(file.path(summaryfiledir, sum_manifest[i]))
-    matched_data <- get_matched_data(summary_data, predictionDB, ...)
+
+    matched_data <- do.call(get_matched_data, c(list(summary_data, predictionDB)))
 
 
     run_results <- compare(matched_data, predictionDB, ...)
 
-    if(!is.null(results_folder)){
-      results_write(run_results, summaryfiledir, gsub(pattern = ".csv", replacement = "", sum_manifest[i]), singlefolder = results_folder)
-    } else{
-      results_write(run_results, summaryfiledir, gsub(pattern = ".csv", replacement = "", sum_manifest[i]))
-    }
+
+    results_write(run_results, outputname = gsub(pattern = ".csv", replacement = "", sum_manifest[i]), singlefolder = results_folder)
+
   }
 }
