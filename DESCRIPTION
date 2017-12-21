@@ -17,12 +17,12 @@ Description: A tool for inferring kinase activity changes from
     which can then be interpreted in an analogous manner to an 
     empirically calculated p-value. 'pKSEA' contains default 
     databases of kinase-substrate predictions from 'NetworKIN' 
-    (NetworKINPred_db)<http://networkin.info> 
-    authors(2014)<doi:10.1038/nmeth.2968>
+    (NetworKINPred_db) <http://networkin.info> 
+    Horn, et. al (2014) <doi:10.1038/nmeth.2968>
     and of known kinase-substrate links from 'PhosphoSitePlus' 
-    (KSEAdb)<https://www.phosphosite.org/>
-    authors(2015)<doi:10.1093/nar/gku1267>.
-Depends: R (>= 3.3.3)
+    (KSEAdb) <https://www.phosphosite.org/>
+    Hornbeck PV, et. al (2015) <doi:10.1093/nar/gku1267>.
+Depends: R (>= 3.3.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
